@@ -1,2 +1,2 @@
-# steam.ly-app-service
-Service handling user activity and event dispatching
+# Steam.ly-app-service
+Service used to handle user client activity and dispatch activity events to an external event handler.
