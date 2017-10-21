@@ -5,6 +5,7 @@ This document outlines all functions exposed by the Steam.ly AppService.
 This section defines the interface functionality for all User-driven activity
 
 ### /review
+*FUTURE: Planned for V2*
 
 GET
 [options] - JSON object
@@ -39,22 +40,43 @@ GET
 This section defines the interface functionality for all Content data source activity
 
 ### /search
+*FUTURE: Planned for V2*
+
 POST
 [options] - JSON object
 - type (ENUM: name, category, publisher, max_price, min_rating)
 
-## EventHistory Interface
-### /recordclick
+## Notification Interface
+
+This section outlines outputs from this service that other services might be interested in listening for
+
+### /notifycreateuser
+POST
+[user_data] - JSON object
+- user_id (Number)
+
+### /notifygamepurchase
+POST
+[game_data] - JSON object
+- game_id (Number)
+- user_id (Number)
+- purchase_price (Number: decimal price)
+
+### /notifyclick
 POST
 [session_data] - JSON object
 - game_id (Number)
 
-### /recordgamesession
+### /notifygamesession
+*FUTURE: Planned for V2*
+
 POST
 [session_data] - JSON object
 - elapsed_time (Number: seconds)
 
-### /recordpagevisitsession
+### /notifypagevisitsession
+*FUTURE: Planned for V2*
+
 POST
 [session_data] - JSON object
 - elapsed_time (Number: seconds)
@@ -63,15 +85,26 @@ POST
 
 This section defines the interface functionality available for accessing metrics and instrumentation
 
+### /usersignups
+GET
+[options] - JSON object
+- category (ENUM: NONE, FPS, ACTION, RPG)
+- start_date
+- end_date
+
 ### /averagesearchtime
+*FUTURE: Planned for V2*
+
 GET
 [options] - JSON object
 - start_date
-- end_data
+- end_date
 - category (ENUM: NONE, ...)
 - granularity (ENUM: day, week, month, year)
 
 ### /averagesearchrequests
+*FUTURE: Planned for V2*
+
 GET
 [options] - JSON object
 - start_date
@@ -80,6 +113,8 @@ GET
 - granularity (ENUM: day, week, month, year)
 
 ### /trendingsearches
+*FUTURE: Planned for V2*
+
 GET
 [options] - JSON object
-- category (ENUM: NONE, ...)
+- category (ENUM: NONE, FPS, ACTION, RPG)
