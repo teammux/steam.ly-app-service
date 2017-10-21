@@ -58,3 +58,28 @@ POST
 POST
 [session_data] - JSON object
 - elapsed_time (Number: seconds)
+
+## Metrics Interface
+
+This section defines the interface functionality available for accessing metrics and instrumentation
+
+### /averagesearchtime
+GET
+[options] - JSON object
+- start_date
+- end_data
+- category (ENUM: NONE, ...)
+- granularity (ENUM: day, week, month, year)
+
+### /averagesearchrequests
+GET
+[options] - JSON object
+- start_date
+- end_data
+- category (ENUM: NONE, ...)
+- granularity (ENUM: day, week, month, year)
+
+### /trendingsearches
+GET
+[options] - JSON object
+- category (ENUM: NONE, ...)
