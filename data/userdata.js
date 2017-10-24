@@ -2,6 +2,10 @@
 Utility script used to generate initial User data to populate a dataset
 */
 
+const fs = require('fs');
+
+const DEFAULT_OUTPUT_FILE = 'userdata_output.txt';
+
 const DEFAULT_TOTAL_USER_COUNT = 100;
 const DEFAULT_USER_NUMBER_START = 1;
 
@@ -117,3 +121,30 @@ const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
 module.exports = {
   generateRandomListOfUsers: generateRandomListOfUsers,
 };
+
+// simple CLI
+// [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
+if (process.argv.length > 2) {
+  const cmd = process.argv[2];
+  const parsedNumberCmd = parseInt(cmd);
+  if (Number.isInteger(parsedNumberCmd) && parsedNumberCmd > 0) {
+    console.log(`generating random list of: ${parsedNumberCmd} users...`);
+    let generatedUsers = generateRandomListOfUsers(parsedNumberCmd);
+
+    // TODO: add option to specify an alternate output_file_name
+    fs.writeFile(DEFAULT_OUTPUT_FILE, JSON.stringify(generatedUsers), (err) => {
+      if (err) {
+        console.error('error detected:', err);
+        return;
+      }
+      console.log('--> successfully created file at:', DEFAULT_OUTPUT_FILE);
+      console.log('done!');
+    });
+  }
+} else {
+  console.log(`
+    Utility script used to generate initial User data to populate a dataset
+
+      [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
+    `);
+}
