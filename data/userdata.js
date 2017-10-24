@@ -2,29 +2,36 @@
 Utility script used to generate initial User data to populate a dataset
 */
 
-const TOTAL_USER_COUNT = 1005000;
+const DEFAULT_TOTAL_USER_COUNT = 100;
+const DEFAULT_USER_NUMBER_START = 1;
 
-// TODO: possibly add weights based on the item
-const PREFERENCE = [
-  'NONE',
-  'FPS',
-  'ACTION',
-  'RPG',
-];
+const PREFERENCE_RATIO = {
+  'NONE': 10,
+  'FPS': 29,
+  'ACTION': 36,
+  'RPG': 25,
+};
 
-const LOCATION = [
-  'NORTH AMERICA',
-  'SOUTH AMERICA',
-  'EUROPE',
-  'ASIA',
-  'AUSTRALIA',
-  'AFRICA',
-  'ANTARCTICA',
-];
+// 2017 ratio percentages for continent taken from:
+// https://www.statista.com/statistics/237584/distribution-of-the-world-population-by-continent/
+// NOTE: rounded up to the nearest percentage point, so this will not equal 100 exactly
+const LOCATION_RATIO = {
+  'NORTH AMERICA': 5,
+  'LATIN AMERICA AND CARIBBEAN': 9,
+  'EUROPE': 10,
+  'ASIA': 60,
+  'AUSTRALIA': 9,
+  'AFRICA': 17,
+  'OCEANIA': 1,
+};
 
-const AGE = {
-  'startRange': 13,
-  'endRange': 120,
+// 2017 ratio percentages for video gamer age range taken from:
+// https://www.statista.com/statistics/189582/age-of-us-video-game-players-since-2010/
+const AGE_RATIO = {
+  'under 18': 29,
+  '18 to 35': 27,
+  '36 to 49': 19,
+  'over 50': 26,
 };
 
 const GENDER = [
@@ -36,13 +43,23 @@ const GENDER = [
 const GENDER_RATIO = {
   'male': 45,
   'female': 45,
-  'declined' 10,
+  'declined': 10,
 };
 
 const USERNAME_PREFIX = 'user_';
 
-const generateWeightTable = (weightKeys) => {
-  
+// use a quick-and-dirty weighted randomizer with expansion
+// this is quick and okay so long as our totalWeights isn't astronomically large
+const generateExpandedWeightTable = (weightKeys) => {
+  let expandedWeightList = [];
+
+  for (let key in weightKeys) {
+    for (let i = 0; i < weightKeys[key]; i++) {
+      expandedWeightList[expandedWeightList.length++] = key;
+    }
+  }
+
+  return expandedWeightList;
 };
 
 class User {
@@ -70,24 +87,33 @@ const getRandomNumberInclusive = (begin = 0, end) => {
   return Math.floor(Math.random() * end) + begin;
 }
 
-const generateRandomListOfUsers = (listSize = TOTAL_USER_COUNT) => {
+const getRandomFieldValue = (weightTable) => {
+  return weightTable[getRandomNumberInclusive(0, weightTable.length)];
+};
+
+const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
   let users = [];
 
-  for (let i = 1; i <= listSize; i++) {
+  const PREFERENCE_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(PREFERENCE_RATIO);
+  const LOCATION_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(LOCATION_RATIO);
+  const GENDER_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(GENDER_RATIO);
+  const AGE_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(AGE_RATIO);
+
+  for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i++) {
     // TODO: hoist these to be more memory-efficient
     const username = USERNAME_PREFIX + i;
-    const preference = PREFERENCE[getRandomNumberInclusive(0, PREFERENCE.length - 1)];
-    const location = LOCATION[getRandomNumberInclusive(0, LOCATION.length - 1)];
-    const age = getRandomNumberInclusive(AGE.startRange, AGE.endRange);
-    const gender = GENDER[getRandomNumberInclusive(0, GENDER.length - 1)];
+    const preference = getRandomFieldValue(PREFERENCE_RATIO_WEIGHT_TABLE);
+    const location = getRandomFieldValue(LOCATION_RATIO_WEIGHT_TABLE);
+    const age = getRandomFieldValue(AGE_RATIO_WEIGHT_TABLE);
+    const gender = getRandomFieldValue(GENDER_RATIO_WEIGHT_TABLE);
     const user = new User(username, preference, location, age, gender);
-    users.push();
-    user.print();
+    users.push(user);
+    // user.print();
   }
 
   return users;
 }
 
 module.exports = {
-  generateRandomListOfUsers: generateRandomListOfUsers
+  generateRandomListOfUsers: generateRandomListOfUsers,
 };
