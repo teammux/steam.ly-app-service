@@ -2,88 +2,114 @@
 This document outlines all functions exposed by the Steam.ly AppService.
 
 ## User Interface
-This section defines the interface functionality for all User-driven activity
-
-### /review
-*FUTURE: Planned for V2*
-
-GET
-[options] - JSON object
-- review_id (Number)
-POST
-[options] - JSON object
-- rating (Number: 1-5)
-- review_text (String: can be null)
+This section defines the interface functionality for all User-driven activity and data.
 
 ### /user
 GET
 [options] - JSON object
-- name (String: cannot be null)
+- username: (String: cannot be null)
+
+[returns] - JSON object
+- user:
+```{
+  id: (Number),
+  username: (String),
+  preferences: (ENUM: NONE, FPS, ACTION, RPG),
+  clicks: (Array of clicks separated by category)
+    {
+      category: (ENUM: NONE, FPS, ACTION, RPG)
+        [
+          total_impressions: (Number),
+          total_clicks: (Number),
+          recommended_clicks: (Number)
+        ], ...
+    }
+}
+```
+
+### /listofusers
+GET
+[options] - JSON object
+- category: (ENUM: NONE, FPS, ACTION, RPG)
+
+[returns] - JSON object
+- users: (Array of user objects)
+```
+[
+  {
+    id: (Number),
+    username: (String),
+    preferences: (ENUM: NONE, FPS, ACTION, RPG),
+    clicks: (Array of clicks separated by category)
+      {
+        category: (ENUM: NONE, FPS, ACTION, RPG)
+          [
+            total_impressions: (Number),
+            total_clicks: (Number),
+            recommended_clicks: (Number)
+          ], ...
+      }
+  }, ...
+]
+```
 
 ### /createuser
 POST
 [options] - JSON object
+- username (String: cannot be null),
+- preferences: (ENUM: NONE, FPS, ACTION, RPG)
+
+[returns] - Nothing
+
+### /login
+GET
+[options] - Query parameters
+- username (String: cannot be null)
+- password (String: cannot be null)
+
+[returns] - HTTP status code/JSON object
+- status: 200 OK
+- recommendation: (Number)
+
+### /logout
+GET
+[options] - Query parameters
 - username (String: cannot be null)
 
-### /purchase
-POST
-[options] - JSON object
-- game_id (Number)
-- price (Number)
-
-### /gameinfo
-GET
-[options] - JSON object
-- name (String: cannot be null)
-
-## Content Interface
-This section defines the interface functionality for all Content data source activity
-
-### /search
-*FUTURE: Planned for V2*
-
-POST
-[options] - JSON object
-- type (ENUM: name, category, publisher, max_price, min_rating)
+[returns] - HTTP status code
+- status: 200 OK
 
 ## Notification Interface
 
-This section outlines outputs from this service that other services might be interested in listening for
+This section outlines outputs from this service that other services might be interested in listening for.
 
 ### /notifycreateuser
 POST
 [user_data] - JSON object
 - user_id (Number)
 
-### /notifygamepurchase
-POST
-[game_data] - JSON object
-- game_id (Number)
-- user_id (Number)
-- purchase_price (Number: decimal price)
+[returns] - Nothing
 
 ### /notifyclick
 POST
 [session_data] - JSON object
 - game_id (Number)
+- user_id (Number)
+- is_recommended_game (Boolean)
 
-### /notifygamesession
-*FUTURE: Planned for V2*
+[returns] - Nothing
 
-POST
-[session_data] - JSON object
-- elapsed_time (Number: seconds)
-
-### /notifypagevisitsession
-*FUTURE: Planned for V2*
-
-POST
-[session_data] - JSON object
-- elapsed_time (Number: seconds)
+event = {
+  type: 'click',
+  date: (Javascript Date format)
+  user_id: (Number)
+  game_id: (Number)
+  is_recommended_game: (Boolean)
+}
 
 ## Metrics Interface
 
-This section defines the interface functionality available for accessing metrics and instrumentation
+This section defines the interface functionality available for accessing metrics and instrumentation.
 
 ### /usersignups
 GET
@@ -92,29 +118,17 @@ GET
 - start_date
 - end_date
 
-### /averagesearchtime
-*FUTURE: Planned for V2*
-
+### /userclicks
 GET
 [options] - JSON object
-- start_date
-- end_date
-- category (ENUM: NONE, ...)
-- granularity (ENUM: day, week, month, year)
+- is_recommended (Boolean)
 
-### /averagesearchrequests
-*FUTURE: Planned for V2*
-
+### /userpreferencecounts
 GET
-[options] - JSON object
-- start_date
-- end_data
-- category (ENUM: NONE, ...)
-- granularity (ENUM: day, week, month, year)
+[options] - Nothing
 
-### /trendingsearches
-*FUTURE: Planned for V2*
-
-GET
-[options] - JSON object
-- category (ENUM: NONE, FPS, ACTION, RPG)
+[returns] - JSON object
+- none (Number)
+- action (Number)
+- rpg (Number)
+- fps (Number)
