@@ -14,3 +14,10 @@ This script generates a JSON file containing all randomly generated static user 
 ```
 [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
 ```
+
+- data/clickprofiledata.js
+
+This script generates a JSON file containing all randomly generated static click profile data
+```
+[usage] node clickprofiledata.js <NUMBER_OF_USER_CLICK_PROFILES_TO_GENERATE>
+```
