@@ -11,10 +11,10 @@ const DEFAULT_TOTAL_USER_COUNT = 100;
 const DEFAULT_USER_NUMBER_START = 1;
 
 const PREFERENCE_RATIO = {
-  'NONE': 10,
-  'FPS': 29,
-  'ACTION': 36,
-  'RPG': 25,
+  NONE: 10,
+  FPS: 29,
+  ACTION: 36,
+  RPG: 25,
 };
 
 // 2017 ratio percentages for continent taken from:
@@ -23,11 +23,11 @@ const PREFERENCE_RATIO = {
 const LOCATION_RATIO = {
   'NORTH AMERICA': 5,
   'LATIN AMERICA AND CARIBBEAN': 9,
-  'EUROPE': 10,
-  'ASIA': 60,
-  'AUSTRALIA': 9,
-  'AFRICA': 17,
-  'OCEANIA': 1,
+  EUROPE: 10,
+  ASIA: 60,
+  AUSTRALIA: 9,
+  AFRICA: 17,
+  OCEANIA: 1,
 };
 
 // 2017 ratio percentages for video gamer age range taken from:
@@ -40,9 +40,9 @@ const AGE_RATIO = {
 };
 
 const GENDER_RATIO = {
-  'male': 45,
-  'female': 45,
-  'declined': 10,
+  male: 45,
+  female: 45,
+  declined: 10,
 };
 
 const USERNAME_PREFIX = 'user_';
@@ -57,8 +57,7 @@ class User {
   }
 
   print() {
-    console.log(
-      `-----------
+    console.log(`-----------
       username: ${this.username}
       preference: ${this.preference}
       location: ${this.location}
@@ -66,17 +65,17 @@ class User {
       gender: ${this.gender}
     `);
   }
-};
+}
 
 const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
-  let users = [];
+  const users = [];
 
   const PREFERENCE_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(PREFERENCE_RATIO);
   const LOCATION_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(LOCATION_RATIO);
   const GENDER_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(GENDER_RATIO);
   const AGE_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(AGE_RATIO);
 
-  for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i++) {
+  for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i += 1) {
     // TODO: hoist these to be more memory-efficient
     const username = USERNAME_PREFIX + i;
     const preference = util.getRandomFieldValue(PREFERENCE_RATIO_WEIGHT_TABLE);
@@ -89,16 +88,16 @@ const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
   }
 
   return users;
-}
+};
 
 // simple CLI
 // [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
 if (process.argv.length > 2) {
   const cmd = process.argv[2];
-  const parsedNumberCmd = parseInt(cmd);
+  const parsedNumberCmd = parseInt(cmd, 10);
   if (Number.isInteger(parsedNumberCmd) && parsedNumberCmd > 0) {
     console.log(`generating random list of: ${parsedNumberCmd} users...`);
-    let generatedUsers = generateRandomListOfUsers(parsedNumberCmd);
+    const generatedUsers = generateRandomListOfUsers(parsedNumberCmd);
 
     // TODO: add option to specify an alternate output_file_name
     fs.writeFile(DEFAULT_OUTPUT_FILE, JSON.stringify(generatedUsers), (err) => {
@@ -120,6 +119,4 @@ if (process.argv.length > 2) {
     `);
 }
 
-module.exports = {
-  generateRandomListOfUsers: generateRandomListOfUsers,
-};
+module.exports.generateRandomListOfUsers = generateRandomListOfUsers;
