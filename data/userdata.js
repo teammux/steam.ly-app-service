@@ -1,9 +1,15 @@
+/* eslint no-underscore-dangle: ["error", { "allowAfterThis": true }] */
+// allowing 'no-underscore-dangle' for using '_id' as the indexing field
+
 /*
 Utility script used to generate initial User data to populate a dataset
 */
 
 const fs = require('fs');
+const path = require('path');
 const util = require('./util.js');
+
+const LOG_TAG = 'User';
 
 const DEFAULT_OUTPUT_FILE = 'userdata_output.txt';
 
@@ -49,7 +55,7 @@ const USERNAME_PREFIX = 'user_';
 
 class User {
   constructor(id, username, preference, location, age, gender) {
-    this.id = id;
+    this._id = id;
     this.username = username;
     this.preference = preference;
     this.location = location;
@@ -97,7 +103,7 @@ if (process.argv.length > 2) {
   const cmd = process.argv[2];
   const parsedNumberCmd = parseInt(cmd, 10);
   if (Number.isInteger(parsedNumberCmd) && parsedNumberCmd > 0) {
-    console.log(`generating random list of: ${parsedNumberCmd} users...`);
+    console.log(`generating random list of: ${parsedNumberCmd} ${LOG_TAG}s...`);
     const generatedUsers = generateRandomListOfUsers(parsedNumberCmd);
 
     // TODO: add option to specify an alternate output_file_name
@@ -114,9 +120,9 @@ if (process.argv.length > 2) {
   console.log(`
     Utility script used to generate initial User data to populate a dataset.
 
-    Results are placed in an 'output.txt' file.
+    Results are placed in an '${DEFAULT_OUTPUT_FILE}' file.
 
-      [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
+      [usage] node ${path.basename(__filename)} <NUMBER_OF_USERS_TO_GENERATE>
     `);
 }
 

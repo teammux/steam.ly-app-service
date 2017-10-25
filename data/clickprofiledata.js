@@ -3,7 +3,10 @@ Utility script used to generate initial Click Profile data to populate a dataset
 */
 
 const fs = require('fs');
+const path = require('path');
 const util = require('./util.js');
+
+const LOG_TAG = 'ClickProfile';
 
 const DEFAULT_OUTPUT_FILE = 'clickprofiledata_output.txt';
 
@@ -60,6 +63,7 @@ class ClickProfile {
 
 const generateRandomListOfClickProfileData = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
   const clickProfileDataList = [];
+
   for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i += 1) {
     // create the click profile data here
     let totalImpressions = 0;
@@ -112,7 +116,7 @@ if (process.argv.length > 2) {
   const cmd = process.argv[2];
   const parsedNumberCmd = parseInt(cmd, 10);
   if (Number.isInteger(parsedNumberCmd) && parsedNumberCmd > 0) {
-    console.log(`generating random list of: ${parsedNumberCmd} users...`);
+    console.log(`generating random list of: ${parsedNumberCmd} ${LOG_TAG}s...`);
     const generatedUsers = generateRandomListOfClickProfileData(parsedNumberCmd);
 
     // TODO: add option to specify an alternate output_file_name
@@ -131,9 +135,9 @@ if (process.argv.length > 2) {
 
     Results are placed in an '${DEFAULT_OUTPUT_FILE}' file.
 
-      [usage] node ${__filename} <NUMBER_OF_USERS_TO_GENERATE>
+      [usage] node ${path.basename(__filename)} <NUMBER_OF_USERS_TO_GENERATE>
 
-        NUMBER_OF_USERS_TO_GENERATE: Limit to 500k per run
+        NUMBER_OF_USERS_TO_GENERATE: Decrease limit if error occurs(e.g. 500k per run)
     `);
 }
 
