@@ -38,12 +38,6 @@ const AGE_RATIO = {
   'over 50': 26,
 };
 
-const GENDER = [
-  'male',
-  'female',
-  'declined',
-];
-
 const GENDER_RATIO = {
   'male': 45,
   'female': 45,
@@ -143,7 +137,9 @@ if (process.argv.length > 2) {
   }
 } else {
   console.log(`
-    Utility script used to generate initial User data to populate a dataset
+    Utility script used to generate initial User data to populate a dataset.
+
+    Results are placed in an 'output.txt' file.
 
       [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
     `);
