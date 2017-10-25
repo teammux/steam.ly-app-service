@@ -48,7 +48,8 @@ const GENDER_RATIO = {
 const USERNAME_PREFIX = 'user_';
 
 class User {
-  constructor(username, preference, location, age, gender) {
+  constructor(id, username, preference, location, age, gender) {
+    this.id = id;
     this.username = username;
     this.preference = preference;
     this.location = location;
@@ -82,7 +83,7 @@ const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
     const location = util.getRandomFieldValue(LOCATION_RATIO_WEIGHT_TABLE);
     const age = util.getRandomFieldValue(AGE_RATIO_WEIGHT_TABLE);
     const gender = util.getRandomFieldValue(GENDER_RATIO_WEIGHT_TABLE);
-    const user = new User(username, preference, location, age, gender);
+    const user = new User(i, username, preference, location, age, gender);
     users.push(user);
     // user.print();
   }
