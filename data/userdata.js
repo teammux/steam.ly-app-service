@@ -3,6 +3,7 @@ Utility script used to generate initial User data to populate a dataset
 */
 
 const fs = require('fs');
+const util = require('./util.js');
 
 const DEFAULT_OUTPUT_FILE = 'userdata_output.txt';
 
@@ -46,20 +47,6 @@ const GENDER_RATIO = {
 
 const USERNAME_PREFIX = 'user_';
 
-// use a quick-and-dirty weighted randomizer with expansion
-// this is quick and okay so long as our totalWeights isn't astronomically large
-const generateExpandedWeightTable = (weightKeys) => {
-  let expandedWeightList = [];
-
-  for (let key in weightKeys) {
-    for (let i = 0; i < weightKeys[key]; i++) {
-      expandedWeightList[expandedWeightList.length++] = key;
-    }
-  }
-
-  return expandedWeightList;
-};
-
 class User {
   constructor(username, preference, location, age, gender) {
     this.username = username;
@@ -81,29 +68,21 @@ class User {
   }
 };
 
-const getRandomNumberInclusive = (begin = 0, end) => {
-  return Math.floor(Math.random() * end) + begin;
-}
-
-const getRandomFieldValue = (weightTable) => {
-  return weightTable[getRandomNumberInclusive(0, weightTable.length)];
-};
-
 const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
   let users = [];
 
-  const PREFERENCE_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(PREFERENCE_RATIO);
-  const LOCATION_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(LOCATION_RATIO);
-  const GENDER_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(GENDER_RATIO);
-  const AGE_RATIO_WEIGHT_TABLE = generateExpandedWeightTable(AGE_RATIO);
+  const PREFERENCE_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(PREFERENCE_RATIO);
+  const LOCATION_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(LOCATION_RATIO);
+  const GENDER_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(GENDER_RATIO);
+  const AGE_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(AGE_RATIO);
 
   for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i++) {
     // TODO: hoist these to be more memory-efficient
     const username = USERNAME_PREFIX + i;
-    const preference = getRandomFieldValue(PREFERENCE_RATIO_WEIGHT_TABLE);
-    const location = getRandomFieldValue(LOCATION_RATIO_WEIGHT_TABLE);
-    const age = getRandomFieldValue(AGE_RATIO_WEIGHT_TABLE);
-    const gender = getRandomFieldValue(GENDER_RATIO_WEIGHT_TABLE);
+    const preference = util.getRandomFieldValue(PREFERENCE_RATIO_WEIGHT_TABLE);
+    const location = util.getRandomFieldValue(LOCATION_RATIO_WEIGHT_TABLE);
+    const age = util.getRandomFieldValue(AGE_RATIO_WEIGHT_TABLE);
+    const gender = util.getRandomFieldValue(GENDER_RATIO_WEIGHT_TABLE);
     const user = new User(username, preference, location, age, gender);
     users.push(user);
     // user.print();
@@ -111,10 +90,6 @@ const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
 
   return users;
 }
-
-module.exports = {
-  generateRandomListOfUsers: generateRandomListOfUsers,
-};
 
 // simple CLI
 // [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
@@ -144,3 +119,7 @@ if (process.argv.length > 2) {
       [usage] node userdata.js <NUMBER_OF_USERS_TO_GENERATE>
     `);
 }
+
+module.exports = {
+  generateRandomListOfUsers: generateRandomListOfUsers,
+};
