@@ -8,10 +8,11 @@ const util = require('./util.js');
 
 const LOG_TAG = 'ClickProfile';
 
-const DEFAULT_OUTPUT_FILE = 'clickprofiledata_output.txt';
-
-const DEFAULT_TOTAL_USER_COUNT = 100;
-const DEFAULT_USER_NUMBER_START = 1;
+const DEFAULT = {
+  OUTPUT_FILE: 'clickprofiledata_output.txt',
+  TOTAL_USER_COUNT: 100,
+  USER_NUMBER_START: 1,
+};
 
 const PREFERENCE_VALUES = [
   'NONE',
@@ -61,10 +62,10 @@ class ClickProfile {
   }
 }
 
-const generateRandomListOfClickProfileData = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
+const generateRandomListOfClickProfileData = (listSize = DEFAULT.TOTAL_USER_COUNT) => {
   const clickProfileDataList = [];
 
-  for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i += 1) {
+  for (let i = DEFAULT.USER_NUMBER_START; i < listSize + DEFAULT.USER_NUMBER_START; i += 1) {
     // create the click profile data here
     let totalImpressions = 0;
     let totalRecommendedClickCount = 0;
@@ -99,7 +100,6 @@ const generateRandomListOfClickProfileData = (listSize = DEFAULT_TOTAL_USER_COUN
       clickProfile.addClickProfileItem(clickProfileItem);
     }
 
-    // new ClickProfile(i, totalImpressions, totalRecommendedClickCount, totalRandomClickCount);
     clickProfile.totalImpressions = totalImpressions;
     clickProfile.totalRecommendedClickCount = totalRecommendedClickCount;
     clickProfile.totalRandomClickCount = totalRandomClickCount;
@@ -120,12 +120,12 @@ if (process.argv.length > 2) {
     const generatedUsers = generateRandomListOfClickProfileData(parsedNumberCmd);
 
     // TODO: add option to specify an alternate output_file_name
-    fs.writeFile(DEFAULT_OUTPUT_FILE, JSON.stringify(generatedUsers), (err) => {
+    fs.writeFile(DEFAULT.OUTPUT_FILE, JSON.stringify(generatedUsers), (err) => {
       if (err) {
         console.error('error detected:', err);
         return;
       }
-      console.log('--> successfully created file at:', DEFAULT_OUTPUT_FILE);
+      console.log('--> successfully created file at:', DEFAULT.OUTPUT_FILE);
       console.log('done!');
     });
   }
@@ -133,7 +133,7 @@ if (process.argv.length > 2) {
   console.log(`
     Utility script used to generate initial Click Profile data to populate a dataset.
 
-    Results are placed in an '${DEFAULT_OUTPUT_FILE}' file.
+    Results are placed in an '${DEFAULT.OUTPUT_FILE}' file.
 
       [usage] node ${path.basename(__filename)} <NUMBER_OF_USERS_TO_GENERATE>
 

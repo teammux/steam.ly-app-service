@@ -11,10 +11,11 @@ const util = require('./util.js');
 
 const LOG_TAG = 'User';
 
-const DEFAULT_OUTPUT_FILE = 'userdata_output.txt';
-
-const DEFAULT_TOTAL_USER_COUNT = 100;
-const DEFAULT_USER_NUMBER_START = 1;
+const DEFAULT = {
+  OUTPUT_FILE: 'userdata_output.txt',
+  TOTAL_USER_COUNT: 100,
+  USER_NUMBER_START: 1,
+};
 
 const PREFERENCE_RATIO = {
   NONE: 10,
@@ -74,7 +75,7 @@ class User {
   }
 }
 
-const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
+const generateRandomListOfUsers = (listSize = DEFAULT.TOTAL_USER_COUNT) => {
   const users = [];
 
   const PREFERENCE_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(PREFERENCE_RATIO);
@@ -82,7 +83,7 @@ const generateRandomListOfUsers = (listSize = DEFAULT_TOTAL_USER_COUNT) => {
   const GENDER_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(GENDER_RATIO);
   const AGE_RATIO_WEIGHT_TABLE = util.generateExpandedWeightTable(AGE_RATIO);
 
-  for (let i = DEFAULT_USER_NUMBER_START; i < listSize + DEFAULT_USER_NUMBER_START; i += 1) {
+  for (let i = DEFAULT.USER_NUMBER_START; i < listSize + DEFAULT.USER_NUMBER_START; i += 1) {
     // TODO: hoist these to be more memory-efficient
     const username = USERNAME_PREFIX + i;
     const preference = util.getRandomFieldValue(PREFERENCE_RATIO_WEIGHT_TABLE);
@@ -107,12 +108,12 @@ if (process.argv.length > 2) {
     const generatedUsers = generateRandomListOfUsers(parsedNumberCmd);
 
     // TODO: add option to specify an alternate output_file_name
-    fs.writeFile(DEFAULT_OUTPUT_FILE, JSON.stringify(generatedUsers), (err) => {
+    fs.writeFile(DEFAULT.OUTPUT_FILE, JSON.stringify(generatedUsers), (err) => {
       if (err) {
         console.error('error detected:', err);
         return;
       }
-      console.log('--> successfully created file at:', DEFAULT_OUTPUT_FILE);
+      console.log('--> successfully created file at:', DEFAULT.OUTPUT_FILE);
       console.log('done!');
     });
   }
@@ -120,7 +121,7 @@ if (process.argv.length > 2) {
   console.log(`
     Utility script used to generate initial User data to populate a dataset.
 
-    Results are placed in an '${DEFAULT_OUTPUT_FILE}' file.
+    Results are placed in an '${DEFAULT.OUTPUT_FILE}' file.
 
       [usage] node ${path.basename(__filename)} <NUMBER_OF_USERS_TO_GENERATE>
     `);
