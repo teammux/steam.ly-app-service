@@ -17,10 +17,10 @@ const generateExpandedWeightTable = (weightKeys) => {
   return expandedWeightList;
 };
 
-const getRandomNumberInclusive = (begin = 0, end) => Math.floor(Math.random() * end) + begin;
+const getRandomNumberInclusive = (begin = 0, end) => Math.floor((Math.random() * end) + 1) + begin;
 
 const getRandomFieldValue =
-  weightTable => weightTable[getRandomNumberInclusive(0, weightTable.length)];
+  weightTable => weightTable[getRandomNumberInclusive(0, weightTable.length - 1)];
 
 module.exports.generateExpandedWeightTable = generateExpandedWeightTable;
 module.exports.getRandomNumberInclusive = getRandomNumberInclusive;

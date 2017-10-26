@@ -7,7 +7,7 @@ Utility script used to generate initial User data to populate a dataset
 
 const fs = require('fs');
 const path = require('path');
-const util = require('./util.js');
+const util = require('../util/util.js');
 
 const LOG_TAG = 'User';
 
