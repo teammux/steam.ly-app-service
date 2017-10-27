@@ -3,9 +3,22 @@ Service used to handle user client activity and dispatch activity events to an e
 
 ## Features
 Handles client interactions with Steam.ly
-- login/logout
+- login/logout (*future*)
 - click interactions
 - provides user profile data points used for recommendations and analytics
+- data generation scripts
+
+## User Event Simulator
+- sim/index.js
+
+This script is used to simulate real-time User Events and is meant to be started and run in the background to test the functionality of the service
+```
+[usage] node sim/index.js <EVENT_BURST_INTERVAL> <EVENT_BURST_QUANTITY>
+
+  EVENT_BURST_INTERVAL: interval in milliseconds to send a batch of events
+
+  EVENT_BURST_QUANTITY: amount of events to send at each burst interval
+```
 
 ## Data Generation Scripts
 - data/userdata.js
