@@ -3,6 +3,7 @@ Utility script used to simulate real-time User Events
 */
 
 const nodeUtil = require('util');
+const path = require('path');
 const util = require('../util/util.js');
 
 const DEFAULT = {
@@ -97,7 +98,7 @@ const generateRandomUserEvent = (burstIntervalRate, burstQuantity) => {
       gameId: randomGameId,
       isRecommendedGame: randomIsRecommendedGame,
     };
-    // dispatch the event here
+    // TODO: dispatch the event here
     userEvent.print();
   }
 };
@@ -107,5 +108,46 @@ const startSimulation =
     setInterval(() => generateRandomUserEvent(burstRate, burstQuantity), burstRate);
   };
 
-// initiate our simulation event loop
-startSimulation();
+const displayUsage = () => {
+  console.log(`
+    Utility script used to generate initial User data to populate a dataset.
+
+    Results are placed in an '${DEFAULT.OUTPUT_FILE}' file.
+
+      [usage] node ${path.basename(__filename)} <EVENT_BURST_INTERVAL> <EVENT_BURST_QUANTITY>
+
+        EVENT_BURST_INTERVAL: interval in milliseconds to send a batch of events
+
+        EVENT_BURST_QUANTITY: amount of events to send at each burst interval
+    `);
+};
+
+// simple CLI
+// [usage] node index.js <EVENT_BURST_INTERVAL> <EVENT_BURST_QUANTITY>
+if (process.argv.length > 1) {
+  const burstIntervalArg = process.argv[2] || DEFAULT.BURST_RATE;
+  const burstQuantityArg = process.argv[3] || DEFAULT.BURST_QUANTITY;
+  const parsedburstIntervalArg = parseInt(burstIntervalArg, 10);
+  const parsedburstQuantityArg = parseInt(burstQuantityArg, 10);
+
+  if (burstIntervalArg === '?') {
+    displayUsage();
+  }
+  // validate our inputs
+  if (Number.isInteger(parsedburstIntervalArg)
+    && parsedburstIntervalArg > 0
+    && Number.isInteger(parsedburstQuantityArg)
+    && parsedburstQuantityArg > 0
+  ) {
+    console.log(`CONFIG:
+      burstInterval: ${parsedburstIntervalArg}
+      burstQuantity: ${parsedburstQuantityArg}
+      `);
+
+    // initiate our simulation event loop
+    console.log('starting user event simulation...');
+    startSimulation(parsedburstIntervalArg, parsedburstQuantityArg);
+  }
+} else {
+  displayUsage();
+}
