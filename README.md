@@ -13,7 +13,7 @@ Handles client interactions with Steam.ly
 
 This script is used to simulate real-time User Events and is meant to be started and run in the background to test the functionality of the service
 ```
-[usage] node ${path.basename(__filename)} <EVENT_BURST_INTERVAL> <EVENT_BURST_QUANTITY>
+[usage] node sim/index.js <EVENT_BURST_INTERVAL> <EVENT_BURST_QUANTITY>
 
   EVENT_BURST_INTERVAL: interval in milliseconds to send a batch of events
 
