@@ -110,9 +110,7 @@ const startSimulation =
 
 const displayUsage = () => {
   console.log(`
-    Utility script used to generate initial User data to populate a dataset.
-
-    Results are placed in an '${DEFAULT.OUTPUT_FILE}' file.
+    Utility script used to simulate real-time User Events and is meant to be started and run in the background
 
       [usage] node ${path.basename(__filename)} <EVENT_BURST_INTERVAL> <EVENT_BURST_QUANTITY>
 
