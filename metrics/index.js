@@ -14,3 +14,18 @@ client.ping({
     console.log('all is well');
   }
 });
+
+const createEvent = (event) => {
+  client.create({
+    index: 'user',
+    type: event.type,
+    id: event.id,
+    body: {
+      user_id: event.user.id,
+      date: event.user.date,
+      data: event.user.content,
+    },
+  });
+};
+
+module.exports.createEvent = createEvent;
