@@ -4,6 +4,7 @@ Utility script used to simulate real-time User Events
 
 const nodeUtil = require('util');
 const path = require('path');
+const axios = require('axios');
 const util = require('../util/util.js');
 
 const DEFAULT = {
@@ -39,6 +40,13 @@ const config = {
   // game
   numOfGames: DEFAULT.NUM_GAMES,
   gameIdStart: DEFAULT.GAME_ID_START,
+
+  // http
+  http: {
+    baseURL: process.env.STEAMLY_SERVER_URL || 'localhost',
+    port: process.env.STEAMLY_SERVER_PORT || 3498,
+    eventEndpoint: '/event',
+  },
 };
 
 // this is essentially the RTC for the simulation and is the source of truth
@@ -99,7 +107,10 @@ const generateRandomUserEvent = (burstIntervalRate, burstQuantity) => {
       isRecommendedGame: randomIsRecommendedGame,
     };
     // TODO: dispatch the event here
-    userEvent.print();
+    // userEvent.print();
+    const postURL = `http://${config.http.baseURL}:${config.http.port}${config.http.eventEndpoint}`;
+    axios.post(postURL)
+      .catch(error => console.log('error posting event:', error));
   }
 };
 
