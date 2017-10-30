@@ -14,39 +14,22 @@ app.post('/event', (request, response) => {
   if (!request.body) {
     response.status(400).send();
   }
-  console.log('body:', request.body);
+  // console.log('body:', request.body);
   const eventRequestData = request.body;
-  // const event = {
-  //   type: 'click',
-  //   user: {
-  //     id: 1,
-  //     date: Date.now(),
-  //     content: {
-  //       game_id: 2,
-  //       is_recommended_game: true,
-  //     },
-  //   },
-  // };
-  // index: 'user',
-  // type: event.type,
-  // body: {
-  //   user_id: event.user.id,
-  //   date: event.user.date,
-  //   data: event.user.content,
-  // },
-  // { "type": "click", "user_id": 1, "game_id": 2, "is_recommended_game": 1 }
   // TODO: validation here
   const event = {
     type: eventRequestData.type,
     user: {
-      id: eventRequestData.user_id,
-      date: Date.now(),
+      id: eventRequestData.userId,
+      date: eventRequestData.date,
       content: {
-        game_id: eventRequestData.game_id,
-        is_recommended_game: eventRequestData.is_recommended_game,
+        game_id: eventRequestData.content.gameId,
+        is_recommended_game: eventRequestData.content.isRecommendedGame,
       },
     },
   };
+  // console.log('event:', event);
+  // dispatch our event here
   metrics.createEvent(event);
   response.status(200).send();
 });
