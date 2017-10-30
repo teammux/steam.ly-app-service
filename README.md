@@ -1,4 +1,4 @@
-# Steam.ly-app-service
+# Steam.ly-app-service [![Build Status](https://travis-ci.org/teammux/steam.ly-app-service.svg?branch=develop)](https://travis-ci.org/teammux/steam.ly-app-service)
 Service used to handle user client activity and dispatch activity events to an external event handler.
 
 ## Features
