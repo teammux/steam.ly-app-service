@@ -19,10 +19,9 @@ client.ping({
 });
 
 const createEvent = (event) => {
-  client.create({
+  client.index({
     index: 'user',
     type: event.type,
-    id: event.id,
     body: {
       user_id: event.user.id,
       date: event.user.date,

@@ -1,29 +1,54 @@
 const process = require('process');
 const path = require('path');
 const express = require('express');
+const bodyParser = require('body-parser');
 const metrics = require('../metrics/index.js');
 
 const app = express();
 
+app.use(bodyParser.json());
+
 let ServerInstance = null;
 
-let EventIdCounter = 1;
-
 app.post('/event', (request, response) => {
+  if (!request.body) {
+    response.status(400).send();
+  }
+  console.log('body:', request.body);
+  const eventRequestData = request.body;
+  // const event = {
+  //   type: 'click',
+  //   user: {
+  //     id: 1,
+  //     date: Date.now(),
+  //     content: {
+  //       game_id: 2,
+  //       is_recommended_game: true,
+  //     },
+  //   },
+  // };
+  // index: 'user',
+  // type: event.type,
+  // body: {
+  //   user_id: event.user.id,
+  //   date: event.user.date,
+  //   data: event.user.content,
+  // },
+  // { "type": "click", "user_id": 1, "game_id": 2, "is_recommended_game": 1 }
+  // TODO: validation here
   const event = {
-    id: EventIdCounter,
-    type: 'click',
+    type: eventRequestData.type,
     user: {
-      id: 1,
+      id: eventRequestData.user_id,
       date: Date.now(),
       content: {
-        hello: 'world',
+        game_id: eventRequestData.game_id,
+        is_recommended_game: eventRequestData.is_recommended_game,
       },
     },
   };
-  EventIdCounter += 1;
   metrics.createEvent(event);
-  response.status(400).send();
+  response.status(200).send();
 });
 
 const startServer = () => {

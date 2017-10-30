@@ -109,7 +109,12 @@ const generateRandomUserEvent = (burstIntervalRate, burstQuantity) => {
     // TODO: dispatch the event here
     // userEvent.print();
     const postURL = `http://${config.http.baseURL}:${config.http.port}${config.http.eventEndpoint}`;
-    axios.post(postURL)
+    axios.post(postURL, {
+      type: userEvent.type,
+      date: userEvent.date,
+      userId: userEvent.userId,
+      content: userEvent.content,
+    })
       .catch(error => console.log('error posting event:', error));
   }
 };
