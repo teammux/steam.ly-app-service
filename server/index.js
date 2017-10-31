@@ -27,6 +27,10 @@ app.post('/event', (request, response) => {
         is_recommended_game: eventRequestData.content.isRecommendedGame,
       },
     };
+
+    // dispatch our event here
+    metrics.createEvent(event);
+    response.status(200).send();
   } else if (eventRequestData && eventRequestData.type === 'view') {
     event.type = eventRequestData.type;
     event.user = {
@@ -36,14 +40,13 @@ app.post('/event', (request, response) => {
         game_id_list: eventRequestData.content.gameIdList,
       },
     };
+    // dispatch our event here
+    metrics.createEvent(event);
+    response.status(200).send();
   } else {
     // we received a bad type
     response.status(400).send();
   }
-
-  // dispatch our event here
-  metrics.createEvent(event);
-  response.status(200).send();
 });
 
 const startServer = () => {
