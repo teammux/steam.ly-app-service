@@ -14,6 +14,7 @@ const URL = `mongodb://${config.baseURL}:${config.port}/${config.dbName}`;
 describe('steam.ly - database', () => {
   before(() => {
     db.open(URL);
+    db.dropUsersCollection();
   });
 
   describe('connection', () => {
@@ -43,13 +44,17 @@ describe('steam.ly - database', () => {
     ];
 
     it('database should be able to insert data', (done) => {
-      db.insertDocuments(TEST_USER_DATA, (result) => {
+      db.insertUserDocuments(TEST_USER_DATA, (result) => {
         assert(result);
         assert(result.result.ok);
         assert(result.result.n === 5);
         done();
       });
-      // done();
+    });
+
+    it('insertUserDocuments should clear the collection', (done) => {
+      assert(db.dropUsersCollection());
+      done();
     });
   });
 
