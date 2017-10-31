@@ -33,11 +33,9 @@ const connect = (url = URL) => {
   MongoClient.connect(url, (err, db) => {
     if (err) {
       console.log('error connecting to database:', err);
-      // return done(err);
       return null;
     }
     state.db = db;
-    // done();
     console.log('successfully connected to database');
     return state.db;
   });

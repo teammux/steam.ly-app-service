@@ -23,6 +23,36 @@ describe('steam.ly - database', () => {
     });
   });
 
+  describe('API', () => {
+    const TEST_USER_DATA = [
+      {
+        id: 1, username: 'user_1', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+      },
+      {
+        id: 2, username: 'user_2', preference: 'FPS', location: 'AUSTRALIA', age: '18 to 35', gender: 'male',
+      },
+      {
+        id: 3, username: 'user_3', preference: 'RPG', location: 'ASIA', age: '18 to 35', gender: 'female',
+      },
+      {
+        id: 4, username: 'user_4', preference: 'FPS', location: 'EUROPE', age: '36 to 49', gender: 'male',
+      },
+      {
+        id: 5, username: 'user_5', preference: 'RPG', location: 'AUSTRALIA', age: '36 to 49', gender: 'female',
+      },
+    ];
+
+    it('database should be able to insert data', (done) => {
+      db.insertDocuments(TEST_USER_DATA, (result) => {
+        assert(result);
+        assert(result.result.ok);
+        assert(result.result.n === 5);
+        done();
+      });
+      // done();
+    });
+  });
+
   after(() => {
     db.close();
   });
