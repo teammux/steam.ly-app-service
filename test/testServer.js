@@ -1,4 +1,5 @@
 /* global describe, it, before, after */
+/* eslint no-unused-vars: ["error", { "args": "none" }] */
 
 const assert = require('assert');
 const axios = require('axios');
@@ -62,7 +63,6 @@ describe('steam.ly - server', () => {
           done();
         })
         .catch((error) => {
-          // console.log('error posting event:', error);
           assert(false);
           done();
         });
