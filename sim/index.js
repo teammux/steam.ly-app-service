@@ -23,8 +23,8 @@ const START_DATE = new Date(Date.UTC(2017, 0, 1, 0, 0, 0, 0));
 const START_DATE_MS = START_DATE.getTime();
 
 const RECOMMEND_CLICKTHROUGH_RATIO = {
-  random: 65,
-  recommended: 35,
+  random: 35,
+  recommended: 65,
 };
 
 // TODO: there's a better way to do this...maybe through a property
@@ -32,6 +32,9 @@ const RECOMMEND_CLICKTHROUGH_MAP = {
   random: 0,
   recommended: 1,
 };
+
+// provide the chance of no click at all
+const CLICK_PROBABILITY = 0.75;
 
 const config = {
   // user
@@ -48,6 +51,8 @@ const config = {
     eventEndpoint: '/event',
   },
 };
+
+const postURL = `http://${config.http.baseURL}:${config.http.port}${config.http.eventEndpoint}`;
 
 // this is essentially the RTC for the simulation and is the source of truth
 // for all event times
@@ -73,6 +78,7 @@ class UserEvent {
 const generateRandomUserEvent = (burstIntervalRate, burstQuantity) => {
   let randomUserId;
   let randomGameId;
+  let recommendedGameId;
   let randomIsRecommendedGame;
 
   const RECOMMEND_CLICKTHROUGH_RATIO_WEIGHT_TABLE =
@@ -91,31 +97,59 @@ const generateRandomUserEvent = (burstIntervalRate, burstQuantity) => {
       isRecommendedGame: randomIsRecommendedGame,
     }
   );
+  const userViewEvent = new UserEvent(
+    'view',
+    randomUserId,
+    CurrentSimTime,
+    {
+      gameIdList: [],
+    }
+  );
   for (let i = 0; i < burstQuantity; i += 1) {
     randomUserId = util.getRandomNumberInclusive(config.userIdStart, config.numOfUsers);
     randomGameId = util.getRandomNumberInclusive(config.gameIdStart, config.numOfGames);
+    recommendedGameId = util.getRandomNumberInclusive(config.gameIdStart, config.numOfGames);
     randomIsRecommendedGame =
       RECOMMEND_CLICKTHROUGH_MAP[
         util.getRandomFieldValue(RECOMMEND_CLICKTHROUGH_RATIO_WEIGHT_TABLE)];
 
     // reset the values of the object to be more memory efficient
-    userEvent.type = 'click';
-    userEvent.userId = randomUserId;
-    userEvent.date = CurrentSimTime;
-    userEvent.content = {
-      gameId: randomGameId,
-      isRecommendedGame: randomIsRecommendedGame,
+    userViewEvent.type = 'view';
+    userViewEvent.userId = randomUserId;
+    userViewEvent.date = CurrentSimTime;
+    userViewEvent.content = {
+      gameIdList: [recommendedGameId, randomGameId],
     };
-    // TODO: dispatch the event here
-    // userEvent.print();
-    const postURL = `http://${config.http.baseURL}:${config.http.port}${config.http.eventEndpoint}`;
+
+    // notify the view impression
     axios.post(postURL, {
-      type: userEvent.type,
-      date: userEvent.date,
-      userId: userEvent.userId,
-      content: userEvent.content,
+      type: userViewEvent.type,
+      date: userViewEvent.date,
+      userId: userViewEvent.userId,
+      content: userViewEvent.content,
     })
       .catch(error => console.log('error posting event:', error));
+
+    // reset the values of the object to be more memory efficient
+    // TODO: differentiate the sim time between the view and click
+    if (Math.random() <= CLICK_PROBABILITY) {
+      userEvent.type = 'click';
+      userEvent.userId = randomUserId;
+      userEvent.date = CurrentSimTime;
+      userEvent.content = {
+        gameId: (randomIsRecommendedGame) ? recommendedGameId : randomGameId,
+        isRecommendedGame: randomIsRecommendedGame,
+      };
+
+      // notify the click
+      axios.post(postURL, {
+        type: userEvent.type,
+        date: userEvent.date,
+        userId: userEvent.userId,
+        content: userEvent.content,
+      })
+        .catch(error => console.log('error posting event:', error));
+    }
   }
 };
 

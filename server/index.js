@@ -16,19 +16,31 @@ app.post('/event', (request, response) => {
   }
   // console.log('body:', request.body);
   const eventRequestData = request.body;
-  // TODO: validation here
-  const event = {
-    type: eventRequestData.type,
-    user: {
+  const event = {};
+  if (eventRequestData && eventRequestData.type === 'click') {
+    event.type = eventRequestData.type;
+    event.user = {
       id: eventRequestData.userId,
       date: eventRequestData.date,
       content: {
         game_id: eventRequestData.content.gameId,
         is_recommended_game: eventRequestData.content.isRecommendedGame,
       },
-    },
-  };
-  // console.log('event:', event);
+    };
+  } else if (eventRequestData && eventRequestData.type === 'view') {
+    event.type = eventRequestData.type;
+    event.user = {
+      id: eventRequestData.userId,
+      date: eventRequestData.date,
+      content: {
+        game_id_list: eventRequestData.content.gameIdList,
+      },
+    };
+  } else {
+    // we received a bad type
+    response.status(400).send();
+  }
+
   // dispatch our event here
   metrics.createEvent(event);
   response.status(200).send();

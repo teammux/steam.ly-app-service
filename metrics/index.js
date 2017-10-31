@@ -19,7 +19,6 @@ client.ping({
 });
 
 const createEvent = (event) => {
-  console.log('createEvent:', event);
   client.index({
     index: 'user',
     type: event.type,
