@@ -12,7 +12,7 @@ const state = {
   db: null,
 };
 
-const dropUsersCollection = () => {
+const dropUsers = () => {
   if (state.db) {
     const collection = state.db.collection('users');
     return collection.drop();
@@ -20,7 +20,7 @@ const dropUsersCollection = () => {
   return false;
 };
 
-const insertManyUserDocuments = (documents, callback) => {
+const insertManyUsers = (documents, callback) => {
   if (state.db) {
     const collection = state.db.collection('users');
 
@@ -31,7 +31,7 @@ const insertManyUserDocuments = (documents, callback) => {
   }
 };
 
-const insertUserDocument = (document, callback) => {
+const insertUser = (document, callback) => {
   if (state.db) {
     const collection = state.db.collection('users');
 
@@ -77,6 +77,6 @@ const close = (done = null) => {
 module.exports.open = connect;
 module.exports.get = get;
 module.exports.close = close;
-module.exports.insertManyUserDocuments = insertManyUserDocuments;
-module.exports.insertUserDocument = insertUserDocument;
-module.exports.dropUsersCollection = dropUsersCollection;
+module.exports.insertManyUsers = insertManyUsers;
+module.exports.insertUser = insertUser;
+module.exports.dropUsers = dropUsers;

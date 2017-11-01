@@ -17,7 +17,7 @@ describe('steam.ly - database', () => {
   });
 
   beforeEach(() => {
-    db.dropUsersCollection();
+    db.dropUsers();
   });
 
   describe('connection', () => {
@@ -50,7 +50,7 @@ describe('steam.ly - database', () => {
       const TEST_SINGLE_USER_DATA = {
         id: 1, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       };
-      db.insertUserDocument(TEST_SINGLE_USER_DATA, (result) => {
+      db.insertUser(TEST_SINGLE_USER_DATA, (result) => {
         assert(result);
         assert(result.result.ok);
         assert(result.result.n === 1);
@@ -59,7 +59,7 @@ describe('steam.ly - database', () => {
     });
 
     it('database should be able to insert many documents at a time', (done) => {
-      db.insertManyUserDocuments(TEST_USER_DATA, (result) => {
+      db.insertManyUsers(TEST_USER_DATA, (result) => {
         assert(result);
         assert(result.result.ok);
         assert(result.result.n === 5);
@@ -67,8 +67,8 @@ describe('steam.ly - database', () => {
       });
     });
 
-    it('insertUserDocuments should clear the collection', (done) => {
-      assert(db.dropUsersCollection());
+    it('insertUsers should clear the collection', (done) => {
+      assert(db.dropUsers());
       done();
     });
   });
