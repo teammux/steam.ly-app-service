@@ -8,6 +8,7 @@ const DB_NAME = process.env.STEAMLY_APP_DB_NAME || 'steamly-app-service';
 
 const URL = `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
+// keep track of the current db state
 const state = {
   db: null,
 };
@@ -37,13 +38,8 @@ const getUsers = (limit = 10) => {
   return collection.find().limit(limit).toArray();
 };
 
-const open = (url = URL) => {
-  if (state.db) {
-    console.log('already connected to database');
-    return state.db;
-  }
-
-  return new Promise((resolve, reject) => {
+const connect = (url = URL) => (
+  new Promise((resolve, reject) => {
     MongoClient.connect(url)
       .then((db) => {
         console.log('successfully connected to database');
@@ -54,49 +50,35 @@ const open = (url = URL) => {
         console.log('error connecting to database:', err);
         reject(err);
       });
-  });
+  })
+);
 
-  // return MongoClient.connect(url)
-  // MongoClient.connect(url)
-  //   .then((db) => {
-  //     console.log('successfully connected to database');
-  //     state.db = db;
-  //   })
-  //   .catch((err) => {
-  //     console.log('error connecting to database:', err);
-  //   });
-  // if (err) {
-  //   console.log('error connecting to database:', err);
-  //   return null;
-  // }
-  //   state.db = db;
-  //   console.log('successfully connected to database');
-  //   return state.db;
-  // });
+const open = (url = URL) => {
+  // establish our connection, if needed
+  if (!state.db) {
+    state.db = (async () => {
+      state.db = await connect(URL);
+      return state.db;
+    })();
+  }
   return state.db;
 };
 
-// const open = (url = URL) => {
-//   if (state.db) {
-//     console.log('already connected to database');
-//     return state.db;
-//   }
-//
-//   MongoClient.connect(url, (err, db) => {
-//     if (err) {
-//       console.log('error connecting to database:', err);
-//       return null;
-//     }
-//     state.db = db;
-//     console.log('successfully connected to database');
-//     return state.db;
-//   });
-//   return state.db;
-// };
-
 const get = () => state.db;
-const close = () => state.db.close();
+const close = () => {
+  if (state.db) {
+    state.db.close();
+  }
+};
 
+// establish our connection
+// using async/await here to prevent race condition when first making connection
+(async () => {
+  state.db = await open(URL);
+  module.exports.connection = state.db;
+})();
+
+module.exports.connection = state.db;
 module.exports.open = open;
 module.exports.get = get;
 module.exports.close = close;
