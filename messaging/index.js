@@ -1,5 +1,7 @@
 const AWS = require('aws-sdk');
 const { MessageConfig } = require('./config.js');
+const db = require('../db/index.js');
+db.open();
 
 // NOTE: These envvars must be set for Amazon SQS services to work
 // AWS_ACCESS_KEY_ID
@@ -10,14 +12,23 @@ const { MessageConfig } = require('./config.js');
 //   secretAccessKey: process.key.AWS_SECRET_ACCESS_KEY,
 // });
 
-const TEST_QUEUE_URL = MessageConfig.test;
-
 AWS.config.update({ region: 'us-west-1' });
 
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
-// TODO: maybe change to allow passing in attributes object as well
+const dbOpen = () => {
+  if (!db.get()) {
+    db.open();
+  }
+};
+
+const dbClose = () => {
+  db.close();
+};
+
+// TODO: Finish making changes here and maybe change to allow passing in attributes object as well
 const sendMessage = (url, type, body) => {
+  // TODO: testing just for now...
   const params = {
     MessageAttributes: {
       Type: {
@@ -46,16 +57,6 @@ const sendMessage = (url, type, body) => {
     });
   });
 };
-
-sendMessage(
-  TEST_QUEUE_URL,
-  'click',
-  {
-    UserId: 'user_97',
-    GameId: 'game_123',
-    isRecommendedGame: true,
-  }
-);
 
 const receiveMessage = (url) => {
   const receiveParams = {
@@ -98,10 +99,58 @@ const receiveMessage = (url) => {
   });
 };
 
-receiveMessage(TEST_QUEUE_URL)
-  .then((data) => {
-    console.log('received message:', data);
-  })
-  .catch((error) => {
-    console.log('received message error:', error);
-  });
+const sendUser = (url, userId) => {
+  // db.open(url)
+  //   .then(() => {
+  //     db.getUserById(userId)
+  //       .then((data) => {
+  //         console.log('*** MY DATA:', data);
+  //         // sendMessage(url, 'user', data);
+  //         db.close();
+  //       })
+  //       .catch(() => {
+  //         db.close();
+  //       });
+  //   })
+  //   .catch(() => {
+  //     // connection error
+  //   });
+  // db.open()
+  //   .then(() => {
+  //     db.getUserById(userId)
+  //       .then((data) => {
+  //         console.log('*** MY DATA:', data);
+  //         // sendMessage(url, 'user', data);
+  //         dbClose();
+  //       })
+  //       .catch(() => {
+  //         db.close();
+  //       });
+  //   })
+  //   .catch(() => {
+  //
+  //   });
+  // db.open()
+  //   .then(() => {
+  //
+  //   })
+  // fetch from db
+  db.getUserById(userId)
+    .then((data) => {
+      console.log('*** MY DATA:', data);
+      // sendMessage(url, 'user', data);
+    })
+    .catch(() => {
+    });
+  // send to message url
+};
+
+const sendEvent = (url, eventId) => {
+  // fetch event
+  // send to message url
+};
+
+module.exports.dbOpen = dbOpen;
+module.exports.dbClose = dbClose;
+module.exports.sendUser = sendUser;
+module.exports.sendEvent = sendEvent;

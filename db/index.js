@@ -43,17 +43,56 @@ const open = (url = URL) => {
     return state.db;
   }
 
-  MongoClient.connect(url, (err, db) => {
-    if (err) {
-      console.log('error connecting to database:', err);
-      return null;
-    }
-    state.db = db;
-    console.log('successfully connected to database');
-    return state.db;
+  return new Promise((resolve, reject) => {
+    MongoClient.connect(url)
+      .then((db) => {
+        console.log('successfully connected to database');
+        state.db = db;
+        resolve(state.db);
+      })
+      .catch((err) => {
+        console.log('error connecting to database:', err);
+        reject(err);
+      });
   });
+
+  // return MongoClient.connect(url)
+  // MongoClient.connect(url)
+  //   .then((db) => {
+  //     console.log('successfully connected to database');
+  //     state.db = db;
+  //   })
+  //   .catch((err) => {
+  //     console.log('error connecting to database:', err);
+  //   });
+  // if (err) {
+  //   console.log('error connecting to database:', err);
+  //   return null;
+  // }
+  //   state.db = db;
+  //   console.log('successfully connected to database');
+  //   return state.db;
+  // });
   return state.db;
 };
+
+// const open = (url = URL) => {
+//   if (state.db) {
+//     console.log('already connected to database');
+//     return state.db;
+//   }
+//
+//   MongoClient.connect(url, (err, db) => {
+//     if (err) {
+//       console.log('error connecting to database:', err);
+//       return null;
+//     }
+//     state.db = db;
+//     console.log('successfully connected to database');
+//     return state.db;
+//   });
+//   return state.db;
+// };
 
 const get = () => state.db;
 const close = () => state.db.close();
