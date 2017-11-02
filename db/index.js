@@ -42,6 +42,17 @@ const insertUser = (document, callback) => {
   }
 };
 
+const getUserById = (userId, callback) => {
+  const collection = state.db.collection('users');
+  collection.find({ _id: userId }).next()
+    .then((data) => {
+      callback(data);
+    })
+    .catch((error) => {
+      callback(null);
+    });
+};
+
 const connect = (url = URL) => {
   if (state.db) {
     console.log('already connected to database');
@@ -79,4 +90,5 @@ module.exports.get = get;
 module.exports.close = close;
 module.exports.insertManyUsers = insertManyUsers;
 module.exports.insertUser = insertUser;
+module.exports.getUserById = getUserById;
 module.exports.dropUsers = dropUsers;

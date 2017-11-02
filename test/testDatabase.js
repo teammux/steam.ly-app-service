@@ -1,4 +1,6 @@
 /* global describe, it, before, after, beforeEach */
+/* eslint no-underscore-dangle: ["error", { "allowAfterThis": true, "allow": ["_id"] }] */
+
 const assert = require('assert');
 const db = require('../db/index.js');
 
@@ -30,25 +32,25 @@ describe('steam.ly - database', () => {
   describe('API', () => {
     const TEST_USER_DATA = [
       {
-        id: 1, username: 'user_1', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+        _id: '1', username: 'user_1', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       },
       {
-        id: 2, username: 'user_2', preference: 'FPS', location: 'AUSTRALIA', age: '18 to 35', gender: 'male',
+        _id: '2', username: 'user_2', preference: 'FPS', location: 'AUSTRALIA', age: '18 to 35', gender: 'male',
       },
       {
-        id: 3, username: 'user_3', preference: 'RPG', location: 'ASIA', age: '18 to 35', gender: 'female',
+        _id: '3', username: 'user_3', preference: 'RPG', location: 'ASIA', age: '18 to 35', gender: 'female',
       },
       {
-        id: 4, username: 'user_4', preference: 'FPS', location: 'EUROPE', age: '36 to 49', gender: 'male',
+        _id: '4', username: 'user_4', preference: 'FPS', location: 'EUROPE', age: '36 to 49', gender: 'male',
       },
       {
-        id: 5, username: 'user_5', preference: 'RPG', location: 'AUSTRALIA', age: '36 to 49', gender: 'female',
+        _id: '5', username: 'user_5', preference: 'RPG', location: 'AUSTRALIA', age: '36 to 49', gender: 'female',
       },
     ];
 
     it('database should be able to insert a single document', (done) => {
       const TEST_SINGLE_USER_DATA = {
-        id: 1, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+        _id: '1', username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       };
       db.insertUser(TEST_SINGLE_USER_DATA, (result) => {
         assert(result);
@@ -64,6 +66,24 @@ describe('steam.ly - database', () => {
         assert(result.result.ok);
         assert(result.result.n === 5);
         done();
+      });
+    });
+
+    it('database should be able to get a user by id', (done) => {
+      const GET_USER_ID = '1';
+      const TEST_SINGLE_USER_DATA = {
+        _id: GET_USER_ID, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+      };
+      db.insertUser(TEST_SINGLE_USER_DATA, (result) => {
+        assert(result);
+        assert(result.result.ok);
+        assert(result.result.n === 1);
+
+        db.getUserById(GET_USER_ID, (getResult) => {
+          assert(getResult);
+          assert(getResult._id === GET_USER_ID);
+          done();
+        });
       });
     });
 
