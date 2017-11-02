@@ -13,62 +13,31 @@ const state = {
 };
 
 const dropUsers = () => {
-  if (state.db) {
-    const collection = state.db.collection('users');
-    return collection.drop();
-  }
-  return false;
-};
-
-const insertManyUsers = (documents, callback) => {
-  if (state.db) {
-    const collection = state.db.collection('users');
-
-    collection.insertMany(documents, (err, result) => {
-      console.log(`Inserted ${result.result.n} documents into the collection`);
-      callback(result);
-    });
-  }
-};
-
-const insertUser = (document, callback) => {
-  if (state.db) {
-    const collection = state.db.collection('users');
-
-    collection.insert(document, (err, result) => {
-      console.log(`Inserted ${result.result.n} document into the collection`);
-      callback(result);
-    });
-  }
-};
-
-const getUserById = (userId, callback) => {
   const collection = state.db.collection('users');
-  collection.find({ _id: userId }).next()
-    .then((data) => {
-      // console.log('*** data:', data);
-      callback(data);
-    })
-    .catch((error) => {
-      // console.log('*** error:', error);
-      callback(null);
-    });
+  return collection.drop();
 };
 
-const getUsers = (callback) => {
+const insertManyUsers = (documents) => {
   const collection = state.db.collection('users');
-  collection.find().limit(5).toArray()
-    .then((data) => {
-      // console.log('*** getUsers data:', data);
-      callback(data);
-    })
-    .catch((error) => {
-      // console.log('*** getUsers error:', error);
-      callback(null);
-    });
+  return collection.insertMany(documents);
 };
 
-const connect = (url = URL) => {
+const insertUser = (document) => {
+  const collection = state.db.collection('users');
+  return collection.insert(document);
+};
+
+const getUserById = (userId) => {
+  const collection = state.db.collection('users');
+  return collection.find({ _id: userId }).next();
+};
+
+const getUsers = (limit = 10) => {
+  const collection = state.db.collection('users');
+  return collection.find().limit(limit).toArray();
+};
+
+const open = (url = URL) => {
   if (state.db) {
     console.log('already connected to database');
     return state.db;
@@ -87,20 +56,9 @@ const connect = (url = URL) => {
 };
 
 const get = () => state.db;
+const close = () => state.db.close();
 
-const close = (done = null) => {
-  if (state.db) {
-    state.db.close((err, result) => {
-      state.db = null;
-      state.mode = null;
-      if (done) {
-        done(err);
-      }
-    });
-  }
-};
-
-module.exports.open = connect;
+module.exports.open = open;
 module.exports.get = get;
 module.exports.close = close;
 module.exports.insertManyUsers = insertManyUsers;

@@ -52,21 +52,29 @@ describe('steam.ly - database', () => {
       const TEST_SINGLE_USER_DATA = {
         _id: '1', username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       };
-      db.insertUser(TEST_SINGLE_USER_DATA, (result) => {
-        assert(result);
-        assert(result.result.ok);
-        assert(result.result.n === 1);
-        done();
-      });
+      db.insertUser(TEST_SINGLE_USER_DATA)
+        .then((result) => {
+          assert(result);
+          assert(result.result.ok);
+          assert(result.result.n === 1);
+          done();
+        })
+        .catch(() => {
+          done();
+        });
     });
 
     it('database should be able to insert many documents at a time', (done) => {
-      db.insertManyUsers(TEST_USER_DATA, (result) => {
-        assert(result);
-        assert(result.result.ok);
-        assert(result.result.n === 5);
-        done();
-      });
+      db.insertManyUsers(TEST_USER_DATA)
+        .then((result) => {
+          assert(result);
+          assert(result.result.ok);
+          assert(result.result.n === 5);
+          done();
+        })
+        .catch(() => {
+          done();
+        });
     });
 
     it('database should be able to get a user by id', (done) => {
@@ -74,22 +82,36 @@ describe('steam.ly - database', () => {
       const TEST_SINGLE_USER_DATA = {
         _id: GET_USER_ID, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       };
-      db.insertUser(TEST_SINGLE_USER_DATA, (result) => {
-        assert(result);
-        assert(result.result.ok);
-        assert(result.result.n === 1);
+      db.insertUser(TEST_SINGLE_USER_DATA)
+        .then((result) => {
+          assert(result);
+          assert(result.result.ok);
+          assert(result.result.n === 1);
 
-        db.getUserById(GET_USER_ID, (getResult) => {
-          assert(getResult);
-          assert(getResult._id === GET_USER_ID);
+          db.getUserById(GET_USER_ID)
+            .then((data) => {
+              assert(data);
+              assert(data._id === GET_USER_ID);
+              done();
+            })
+            .catch(() => {
+              done();
+            });
+        })
+        .catch(() => {
           done();
         });
-      });
     });
 
     it('insertUsers should clear the collection', (done) => {
-      assert(db.dropUsers());
-      done();
+      db.dropUsers()
+        .then((data) => {
+          assert(data);
+          done();
+        })
+        .catch(() => {
+          done();
+        });
     });
   });
 
