@@ -46,9 +46,24 @@ const getUserById = (userId, callback) => {
   const collection = state.db.collection('users');
   collection.find({ _id: userId }).next()
     .then((data) => {
+      // console.log('*** data:', data);
       callback(data);
     })
     .catch((error) => {
+      // console.log('*** error:', error);
+      callback(null);
+    });
+};
+
+const getUsers = (callback) => {
+  const collection = state.db.collection('users');
+  collection.find().limit(5).toArray()
+    .then((data) => {
+      // console.log('*** getUsers data:', data);
+      callback(data);
+    })
+    .catch((error) => {
+      // console.log('*** getUsers error:', error);
       callback(null);
     });
 };
@@ -91,4 +106,5 @@ module.exports.close = close;
 module.exports.insertManyUsers = insertManyUsers;
 module.exports.insertUser = insertUser;
 module.exports.getUserById = getUserById;
+module.exports.getUsers = getUsers;
 module.exports.dropUsers = dropUsers;
