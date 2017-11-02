@@ -1,4 +1,4 @@
-/* global describe, it, before, after */
+/* global describe, it, before, after, beforeEach */
 const assert = require('assert');
 const db = require('../db/index.js');
 
@@ -14,7 +14,10 @@ const URL = `mongodb://${config.baseURL}:${config.port}/${config.dbName}`;
 describe('steam.ly - database', () => {
   before(() => {
     db.open(URL);
-    db.dropUsersCollection();
+  });
+
+  beforeEach(() => {
+    db.dropUsers();
   });
 
   describe('connection', () => {
@@ -43,8 +46,20 @@ describe('steam.ly - database', () => {
       },
     ];
 
-    it('database should be able to insert data', (done) => {
-      db.insertUserDocuments(TEST_USER_DATA, (result) => {
+    it('database should be able to insert a single document', (done) => {
+      const TEST_SINGLE_USER_DATA = {
+        id: 1, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+      };
+      db.insertUser(TEST_SINGLE_USER_DATA, (result) => {
+        assert(result);
+        assert(result.result.ok);
+        assert(result.result.n === 1);
+        done();
+      });
+    });
+
+    it('database should be able to insert many documents at a time', (done) => {
+      db.insertManyUsers(TEST_USER_DATA, (result) => {
         assert(result);
         assert(result.result.ok);
         assert(result.result.n === 5);
@@ -52,8 +67,8 @@ describe('steam.ly - database', () => {
       });
     });
 
-    it('insertUserDocuments should clear the collection', (done) => {
-      assert(db.dropUsersCollection());
+    it('insertUsers should clear the collection', (done) => {
+      assert(db.dropUsers());
       done();
     });
   });
