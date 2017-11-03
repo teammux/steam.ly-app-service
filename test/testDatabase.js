@@ -32,25 +32,25 @@ describe('steam.ly - database', () => {
   describe('API', () => {
     const TEST_USER_DATA = [
       {
-        _id: '1', username: 'user_1', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+        _id: 1, username: 'user_1', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       },
       {
-        _id: '2', username: 'user_2', preference: 'FPS', location: 'AUSTRALIA', age: '18 to 35', gender: 'male',
+        _id: 2, username: 'user_2', preference: 'FPS', location: 'AUSTRALIA', age: '18 to 35', gender: 'male',
       },
       {
-        _id: '3', username: 'user_3', preference: 'RPG', location: 'ASIA', age: '18 to 35', gender: 'female',
+        _id: 3, username: 'user_3', preference: 'RPG', location: 'ASIA', age: '18 to 35', gender: 'female',
       },
       {
-        _id: '4', username: 'user_4', preference: 'FPS', location: 'EUROPE', age: '36 to 49', gender: 'male',
+        _id: 4, username: 'user_4', preference: 'FPS', location: 'EUROPE', age: '36 to 49', gender: 'male',
       },
       {
-        _id: '5', username: 'user_5', preference: 'RPG', location: 'AUSTRALIA', age: '36 to 49', gender: 'female',
+        _id: 5, username: 'user_5', preference: 'RPG', location: 'AUSTRALIA', age: '36 to 49', gender: 'female',
       },
     ];
 
     it('database should be able to insert a single document', (done) => {
       const TEST_SINGLE_USER_DATA = {
-        _id: '1', username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
+        _id: 1, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       };
       db.insertUser(TEST_SINGLE_USER_DATA)
         .then((result) => {
