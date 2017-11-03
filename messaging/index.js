@@ -1,6 +1,8 @@
 /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
 const AWS = require('aws-sdk');
+const uuidv4 = require('uuid/v4');
+const { MessageConfig } = require('./config.js');
 const db = require('../db/index.js');
 
 // TODO: maybe move this into a config
@@ -55,7 +57,7 @@ const sendUser = (url, userId, isFifo = false) => {
       // additional params for FIFO queues
       if (isFifo) {
         params.MessageGroupId = SERVICE_NAME;
-        params.MessageDeduplicationId = SERVICE_NAME;
+        params.MessageDeduplicationId = uuidv4();
       }
 
       sqs.sendMessage(params, (err, messageData) => {
@@ -71,22 +73,9 @@ const sendUser = (url, userId, isFifo = false) => {
   // send to message url
 };
 
+// TODO: add messageArgs
 const sendEvent = (url, eventId, messageBody = {}, isFifo = false) => {
   const params = {
-    MessageAttributes: {
-      Type: {
-        DataType: 'String',
-        StringValue: 'user',
-      },
-      Date: {
-        DataType: 'String',
-        StringValue: Date.now().toString(),
-      },
-      EventId: {
-        DataType: 'String',
-        StringValue: eventId.toString(),
-      },
-    },
     MessageBody: JSON.stringify(messageBody),
     QueueUrl: url,
   };
@@ -94,7 +83,7 @@ const sendEvent = (url, eventId, messageBody = {}, isFifo = false) => {
   // additional params for FIFO queues
   if (isFifo) {
     params.MessageGroupId = SERVICE_NAME;
-    params.MessageDeduplicationId = SERVICE_NAME;
+    params.MessageDeduplicationId = uuidv4();
   }
 
   sqs.sendMessage(params, (err, messageData) => {
@@ -106,5 +95,18 @@ const sendEvent = (url, eventId, messageBody = {}, isFifo = false) => {
   });
 };
 
+const sendEventToEventService = (userId, type, isRecommendedGame, eventDate) => {
+  // TODO: maybe do some validation
+  const messageBody = {
+    user_id: userId,
+    item_id: 0,
+    type: 'user_click',
+    is_recommended: isRecommendedGame,
+    date: eventDate,
+  };
+  sendEvent(MessageConfig.eventAggregator, 'click', messageBody, true);
+};
+
+module.exports.sendEventToEventService = sendEventToEventService;
 module.exports.sendUser = sendUser;
 module.exports.sendEvent = sendEvent;

@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const metrics = require('../metrics/index.js');
+const messaging = require('../messaging/index.js');
 
 const app = express();
 
@@ -42,6 +43,15 @@ app.post('/event', (request, response) => {
     };
     // dispatch our event here
     metrics.createEvent(event);
+    // NOTE: we are only sending clicks to the EventService for now
+    if (event.type === 'click') {
+      messaging.sendEventToEventService(
+        event.user.id,
+        event.type,
+        event.user.content.is_recommended_game,
+        event.user.date
+      );
+    }
     response.status(200).send();
   } else {
     // we received a bad type
