@@ -8,75 +8,82 @@ const DB_NAME = process.env.STEAMLY_APP_DB_NAME || 'steamly-app-service';
 
 const URL = `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
+// keep track of the current db state
 const state = {
   db: null,
 };
 
 const dropUsers = () => {
-  if (state.db) {
-    const collection = state.db.collection('users');
-    return collection.drop();
-  }
-  return false;
+  const collection = state.db.collection('users');
+  return collection.drop();
 };
 
-const insertManyUsers = (documents, callback) => {
-  if (state.db) {
-    const collection = state.db.collection('users');
-
-    collection.insertMany(documents, (err, result) => {
-      console.log(`Inserted ${result.result.n} documents into the collection`);
-      callback(result);
-    });
-  }
+const insertManyUsers = (documents) => {
+  const collection = state.db.collection('users');
+  return collection.insertMany(documents);
 };
 
-const insertUser = (document, callback) => {
-  if (state.db) {
-    const collection = state.db.collection('users');
-
-    collection.insert(document, (err, result) => {
-      console.log(`Inserted ${result.result.n} document into the collection`);
-      callback(result);
-    });
-  }
+const insertUser = (document) => {
+  const collection = state.db.collection('users');
+  return collection.insert(document);
 };
 
-const connect = (url = URL) => {
-  if (state.db) {
-    console.log('already connected to database');
-    return state.db;
-  }
+const getUserById = (userId) => {
+  const collection = state.db.collection('users');
+  return collection.find({ _id: userId }).next();
+};
 
-  MongoClient.connect(url, (err, db) => {
-    if (err) {
-      console.log('error connecting to database:', err);
-      return null;
-    }
-    state.db = db;
-    console.log('successfully connected to database');
-    return state.db;
-  });
+const getUsers = (limit = 10) => {
+  const collection = state.db.collection('users');
+  return collection.find().limit(limit).toArray();
+};
+
+const connect = (url = URL) => (
+  new Promise((resolve, reject) => {
+    MongoClient.connect(url)
+      .then((db) => {
+        console.log('successfully connected to database');
+        state.db = db;
+        resolve(state.db);
+      })
+      .catch((err) => {
+        console.log('error connecting to database:', err);
+        reject(err);
+      });
+  })
+);
+
+const open = (url = URL) => {
+  // establish our connection, if needed
+  if (!state.db) {
+    state.db = (async () => {
+      state.db = await connect(URL);
+      return state.db;
+    })();
+  }
   return state.db;
 };
 
 const get = () => state.db;
-
-const close = (done = null) => {
+const close = () => {
   if (state.db) {
-    state.db.close((err, result) => {
-      state.db = null;
-      state.mode = null;
-      if (done) {
-        done(err);
-      }
-    });
+    state.db.close();
   }
 };
 
-module.exports.open = connect;
+// establish our connection
+// using async/await here to prevent race condition when first making connection
+(async () => {
+  state.db = await open(URL);
+  module.exports.connection = state.db;
+})();
+
+module.exports.connection = state.db;
+module.exports.open = open;
 module.exports.get = get;
 module.exports.close = close;
 module.exports.insertManyUsers = insertManyUsers;
 module.exports.insertUser = insertUser;
+module.exports.getUserById = getUserById;
+module.exports.getUsers = getUsers;
 module.exports.dropUsers = dropUsers;
