@@ -4,7 +4,7 @@
   "description": "Service used to handle user client activity for steam.ly",
   "main": ".eslintrc.js",
   "scripts": {
-    "test": "node server/index.js && mocha",
+    "test": "node server/index.js & mocha",
     "start-server": "node server/index.js start",
     "start-event-sim": "node sim/index.js"
   },
@@ -32,6 +32,7 @@
     "body-parser": "^1.18.2",
     "elasticsearch": "^13.3.1",
     "express": "^4.16.2",
-    "mongodb": "^2.2.33"
+    "mongodb": "^2.2.33",
+    "uuid": "^3.1.0"
   }
 }

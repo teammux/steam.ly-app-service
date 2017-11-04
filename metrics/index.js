@@ -5,7 +5,7 @@ const MODULE_NAME = 'metrics';
 
 const client = new elasticsearch.Client({
   host: 'localhost:9200',
-  log: 'trace',
+  // log: 'trace',
 });
 
 client.ping({
