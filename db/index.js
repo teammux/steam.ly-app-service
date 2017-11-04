@@ -42,12 +42,10 @@ const connect = (url = URL) => (
   new Promise((resolve, reject) => {
     MongoClient.connect(url)
       .then((db) => {
-        console.log('successfully connected to database');
         state.db = db;
         resolve(state.db);
       })
       .catch((err) => {
-        console.log('error connecting to database:', err);
         reject(err);
       });
   })
@@ -57,7 +55,13 @@ const open = (url = URL) => {
   // establish our connection, if needed
   if (!state.db) {
     state.db = (async () => {
-      state.db = await connect(URL);
+      await connect(URL)
+        .then((connection) => {
+          console.log('successfully connected to database');
+        })
+        .catch((error) => {
+          console.log('error connecting to database:', error);
+        });
       return state.db;
     })();
   }

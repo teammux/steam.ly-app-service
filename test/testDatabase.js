@@ -19,7 +19,11 @@ describe('steam.ly - database', () => {
   });
 
   beforeEach(() => {
-    db.dropUsers();
+    db.dropUsers()
+      .then(() => {
+      })
+      .catch(() => {
+      });
   });
 
   describe('connection', () => {

@@ -4,7 +4,7 @@
   "description": "Service used to handle user client activity for steam.ly",
   "main": ".eslintrc.js",
   "scripts": {
-    "test": "node server/index.js && mocha",
+    "test": "node server/index.js & mocha",
     "start-server": "node server/index.js start",
     "start-event-sim": "node sim/index.js"
   },

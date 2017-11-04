@@ -8,18 +8,13 @@ const db = require('../db/index.js');
 // TODO: maybe move this into a config
 const SERVICE_NAME = 'app-service';
 
-// NOTE: These envvars must be set for Amazon SQS services to work
-// AWS_ACCESS_KEY_ID
-// AWS_SECRET_ACCESS_KEY
-// AWS_SESSION_TOKEN (optional)
-// AWS.config.update({
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.key.AWS_SECRET_ACCESS_KEY,
-// });
-
 // do AWS setup
-// TODO: maybe move this to a config
-AWS.config.update({ region: 'us-west-1' });
+// TODO: maybe move this to a config file
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_SQS_REGION || 'us-east-2',
+});
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
 const sendUser = (url, userId, isFifo = false) => {
@@ -111,6 +106,16 @@ const sendEventToEventService = (userId, type, isRecommendedGame, eventDate) => 
   sendEvent(MessageConfig.eventAggregator, 'click', messageBody, true);
 };
 
+const start = () => {
+  db.open();
+};
+
+const stop = () => {
+  db.close();
+};
+
 module.exports.sendEventToEventService = sendEventToEventService;
 module.exports.sendUser = sendUser;
 module.exports.sendEvent = sendEvent;
+module.exports.start = start;
+module.exports.stop = stop;

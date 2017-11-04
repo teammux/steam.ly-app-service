@@ -31,6 +31,13 @@ app.post('/event', (request, response) => {
 
     // dispatch our event here
     metrics.createEvent(event);
+    // NOTE: we are only sending clicks to the EventService for now
+    messaging.sendEventToEventService(
+      event.user.id,
+      event.type,
+      event.user.content.is_recommended_game,
+      event.user.date
+    );
     response.status(200).send();
   } else if (eventRequestData && eventRequestData.type === 'view') {
     event.type = eventRequestData.type;
@@ -44,14 +51,12 @@ app.post('/event', (request, response) => {
     // dispatch our event here
     metrics.createEvent(event);
     // NOTE: we are only sending clicks to the EventService for now
-    if (event.type === 'click') {
-      messaging.sendEventToEventService(
-        event.user.id,
-        event.type,
-        event.user.content.is_recommended_game,
-        event.user.date
-      );
-    }
+    // messaging.sendEventToEventService(
+    //   event.user.id,
+    //   event.type,
+    //   event.user.content.is_recommended_game,
+    //   event.user.date
+    // );
     response.status(200).send();
   } else {
     // we received a bad type
@@ -65,6 +70,7 @@ const startServer = () => {
   ServerInstance = app.listen(app.get('port'), () => {
     console.log(`listening on port ${app.get('port')}`);
   });
+  messaging.start();
 };
 
 const stopServer = () => {
@@ -72,6 +78,7 @@ const stopServer = () => {
   if (ServerInstance) {
     ServerInstance.close();
   }
+  messaging.stop();
 };
 
 const displayUsage = () => {
