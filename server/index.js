@@ -4,12 +4,28 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const metrics = require('../metrics/index.js');
 const messaging = require('../messaging/index.js');
+const db = require('../db/index.js');
 
 const app = express();
 
 app.use(bodyParser.json());
 
 let ServerInstance = null;
+
+app.get('/user/:id', (request, response) => {
+  const userId = parseInt(request.params.id, 10);
+  if (Number.isInteger(userId)) {
+    db.getUserById(userId)
+      .then((data) => {
+        response.status(200).send(data);
+      })
+      .catch((error) => {
+        response.status(404).send(error);
+      });
+  } else {
+    response.status(404).send();
+  }
+});
 
 app.post('/event', (request, response) => {
   if (!request.body) {
