@@ -26,50 +26,54 @@ const sendUser = (url, userId, isFifo = false) => {
   // fetch from db
   db.getUserById(userId)
     .then((data) => {
-      const userBody = {
-        id: data._id,
-        username: data.username,
-        preference: data.preference,
-        location: data.location,
-        age: data.age,
-        gender: data.gender,
-      };
+      if (data) {
+        const userBody = {
+          id: data._id,
+          username: data.username,
+          preference: data.preference,
+          location: data.location,
+          age: data.age,
+          gender: data.gender,
+        };
 
-      const params = {
-        MessageAttributes: {
-          Type: {
-            DataType: 'String',
-            StringValue: 'user',
+        const params = {
+          MessageAttributes: {
+            Type: {
+              DataType: 'String',
+              StringValue: 'user',
+            },
+            Date: {
+              DataType: 'String',
+              StringValue: Date.now().toString(),
+            },
+            UserId: {
+              DataType: 'String',
+              StringValue: userId.toString(),
+            },
           },
-          Date: {
-            DataType: 'String',
-            StringValue: Date.now().toString(),
-          },
-          UserId: {
-            DataType: 'String',
-            StringValue: userId.toString(),
-          },
-        },
-        MessageBody: JSON.stringify(userBody),
-        QueueUrl: url,
-      };
+          MessageBody: JSON.stringify(userBody),
+          QueueUrl: url,
+        };
 
-      // additional params for FIFO queues
-      if (isFifo) {
-        params.MessageGroupId = SERVICE_NAME;
-        params.MessageDeduplicationId = uuidv4();
-      }
-
-      sqs.sendMessage(params, (err, messageData) => {
-        if (err) {
-          console.log('error sending message:', err);
-        } else {
-          console.log('send message:', messageData.MessageId);
+        // additional params for FIFO queues
+        if (isFifo) {
+          params.MessageGroupId = SERVICE_NAME;
+          params.MessageDeduplicationId = uuidv4();
         }
-      });
+
+        sqs.sendMessage(params, (err, messageData) => {
+          if (err) {
+            console.log('error sending message:', err);
+          } else {
+            console.log('send message:', messageData.MessageId);
+          }
+        });
+      }
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(`unable to fetch user: ${userId} with error - ${error}`);
     });
+
   // send to message url
 };
 
