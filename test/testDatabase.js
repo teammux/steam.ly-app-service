@@ -1,4 +1,4 @@
-/* global describe, it, before, after, beforeEach */
+/* global describe, it, xit, before, after, beforeEach */
 /* eslint no-underscore-dangle: ["error", { "allowAfterThis": true, "allow": ["_id"] }] */
 
 const assert = require('assert');
@@ -82,7 +82,7 @@ describe('steam.ly - database', () => {
     });
 
     it('database should be able to get a user by id', (done) => {
-      const GET_USER_ID = '1';
+      const GET_USER_ID = 1;
       const TEST_SINGLE_USER_DATA = {
         _id: GET_USER_ID, username: 'test_user3456', preference: 'FPS', location: 'ASIA', age: 'over 50', gender: 'male',
       };
@@ -107,7 +107,7 @@ describe('steam.ly - database', () => {
         });
     });
 
-    it('insertUsers should clear the collection', (done) => {
+    xit('insertUsers should clear the collection', (done) => {
       db.dropUsers()
         .then((data) => {
           assert(data);
