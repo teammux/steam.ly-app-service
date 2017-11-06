@@ -5,7 +5,6 @@
 const assert = require('assert');
 const axios = require('axios');
 const server = require('../server/index.js');
-const db = require('../db/index.js');
 
 const STEAMLY_TEST_PORT = 3498;
 
