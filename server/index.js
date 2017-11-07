@@ -12,6 +12,10 @@ app.use(bodyParser.json());
 
 let ServerInstance = null;
 
+app.get('/hello', (request, response) => {
+  response.status(200).send('hello');
+});
+
 app.get('/user/:id', (request, response) => {
   const userId = parseInt(request.params.id, 10);
   if (Number.isInteger(userId)) {
@@ -82,7 +86,7 @@ app.post('/event', (request, response) => {
 
 const startServer = () => {
   console.log('starting server...');
-  app.set('port', process.env.STEAMLY_SERVER_PORT || 3498);
+  app.set('port', process.env.STEAMLY_SERVER_PORT || 80);
   ServerInstance = app.listen(app.get('port'), () => {
     console.log(`listening on port ${app.get('port')}`);
   });
